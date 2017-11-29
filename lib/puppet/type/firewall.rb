@@ -1582,12 +1582,37 @@ Puppet::Type.newtype(:firewall) do
     desc <<-EOS
       String matching feature, offset from which we start looking for any matching.
     EOS
+
+    munge do |value|
+      match = value.to_s.match("^([0-9])*$")
+      if match.nil?
+        raise ArgumentError, "string_from must be an integer"
+      end
+
+      if match[1].to_i > 65535 || match[1].to_i < 0
+        raise ArgumentError, "string_from must be between 0 and 65535"
+      end
+      value
+    end
   end
 
   newproperty(:string_to, required_features: :string_matching) do
     desc <<-EOS
       String matching feature, offset up to which we should scan.
     EOS
+
+    munge do |value|
+      match = value.to_s.match("^([0-9])*$")
+      if match.nil?
+        raise ArgumentError, "string_to must be an integer"
+      end
+
+      if match[1].to_i > 65535 || match[1].to_i < 0
+        raise ArgumentError, "string_to must be between 0 and 65535"
+      end
+
+      value
+    end
   end
 
   newproperty(:queue_num, required_features: :queue_num) do
